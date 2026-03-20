@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Basedodici — Configuratore 3D: Briefing Tecnico</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+:root {
+  --black: #080808;
+  --white: #f0ede8;
+  --accent: #e8ff47;
+  --red: #ff3b2f;
+  --green: #2dff8b;
+  --orange: #ff8c2d;
+  --blue: #4d9fff;
+  --purple: #b06fff;
+  --grey1: #161616;
+  --grey2: #222;
+  --grey3: #333;
+  --dim: #666;
+  --border: #242424;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: var(--black);
+  color: var(--white);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+/* ── COVER ── */
+.cover {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 60px;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+
+.cover::before {
+  content: '';
+  position: absolute;
+  top: -200px; right: -200px;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(232,255,71,0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.cover-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.logo-mark {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  color: var(--dim);
+  text-transform: uppercase;
+}
+
+.doc-badge {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  border: 1px solid var(--border);
+  padding: 6px 14px;
+  color: var(--dim);
+  letter-spacing: 0.1em;
+}
+
+.cover-center {
+  padding: 80px 0 40px;
+}
+
+.cover-eyebrow {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  color: var(--accent);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.cover-eyebrow::after {
+  content: '';
+  display: inline-block;
+  width: 40px;
+  height: 1px;
+  background: var(--accent);
+}
+
+.cover-title {
+  font-family: 'Space Mono', monospace;
+  font-size: clamp(32px, 5vw, 64px);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  margin-bottom: 32px;
+}
+
+.cover-title .dim { color: var(--dim); }
+.cover-title .acc { color: var(--accent); }
+
+.cover-desc {
+  max-width: 560px;
+  color: #888;
+  font-size: 15px;
+  line-height: 1.8;
+}
+
+.cover-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding-top: 40px;
+  border-top: 1px solid var(--border);
+}
+
+.cover-meta {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  color: var(--dim);
+  line-height: 2;
+}
+
+.audience-tags {
+  display: flex;
+  gap: 8px;
+}
+
+.aud-tag {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  border-radius: 2px;
+}
+
+.aud-dev { background: rgba(77,159,255,0.12); color: var(--blue); border: 1px solid rgba(77,159,255,0.2); }
+.aud-3d { background: rgba(176,111,255,0.12); color: var(--purple); border: 1px solid rgba(176,111,255,0.2); }
+.aud-owner { background: rgba(232,255,71,0.1); color: var(--accent); border: 1px solid rgba(232,255,71,0.2); }
+
+/* ── NAV ── */
+.toc-bar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(8,8,8,0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 60px;
+  display: flex;
+  gap: 0;
+  overflow-x: auto;
+}
+
+.toc-bar a {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--dim);
+  text-decoration: none;
+  padding: 14px 20px;
+  border-right: 1px solid var(--border);
+  white-space: nowrap;
+  transition: color 0.15s, background 0.15s;
+  flex-shrink: 0;
+}
+
+.toc-bar a:first-child { border-left: 1px solid var(--border); }
+.toc-bar a:hover { color: var(--accent); background: rgba(232,255,71,0.04); }
+
+/* ── SECTIONS ── */
+.section {
+  border-bottom: 1px solid var(--border);
+  padding: 80px 60px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.sec-header {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  margin-bottom: 48px;
+}
+
+.sec-num {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  color: var(--accent);
+  letter-spacing: 0.15em;
+  flex-shrink: 0;
+}
+
+.sec-title {
+  font-family: 'Space Mono', monospace;
+  font-size: clamp(18px, 2.5vw, 26px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.sec-sub {
+  font-size: 14px;
+  color: #777;
+  margin-top: 6px;
+  max-width: 600px;
+}
+
+/* ── GRID ── */
+.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.g3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+.g4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+
+/* ── CARDS ── */
+.card {
+  background: var(--grey1);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 24px;
+}
+
+.card-title {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  color: var(--white);
+}
+
+.card p, .card li { font-size: 13px; color: #999; line-height: 1.7; }
+.card ul { list-style: none; padding: 0; }
+.card ul li { padding: 4px 0 4px 16px; position: relative; border-bottom: 1px solid rgba(255,255,255,0.03); }
+.card ul li:last-child { border-bottom: none; }
+.card ul li::before { content: '—'; position: absolute; left: 0; color: var(--dim); font-size: 11px; }
+
+.card-green { border-left: 3px solid var(--green); }
+.card-red { border-left: 3px solid var(--red); }
+.card-blue { border-left: 3px solid var(--blue); }
+.card-orange { border-left: 3px solid var(--orange); }
+.card-accent { border-left: 3px solid var(--accent); }
+.card-purple { border-left: 3px solid var(--purple); }
+
+/* ── TAGS ── */
+.tag {
+  display: inline-block;
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 2px;
+  margin-bottom: 10px;
+}
+.t-green { background: rgba(45,255,139,0.1); color: var(--green); }
+.t-red { background: rgba(255,59,47,0.1); color: var(--red); }
+.t-blue { background: rgba(77,159,255,0.1); color: var(--blue); }
+.t-orange { background: rgba(255,140,45,0.1); color: var(--orange); }
+.t-acc { background: rgba(232,255,71,0.1); color: var(--accent); }
+.t-purple { background: rgba(176,111,255,0.1); color: var(--purple); }
+.t-dim { background: rgba(255,255,255,0.05); color: var(--dim); }
+
+/* ── CALLOUT ── */
+.callout {
+  border-radius: 4px;
+  padding: 20px 24px;
+  margin: 24px 0;
+}
+.callout-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.callout p { font-size: 13px; line-height: 1.7; }
+
+.co-acc { background: rgba(232,255,71,0.05); border: 1px solid rgba(232,255,71,0.2); }
+.co-acc .callout-label { color: var(--accent); }
+.co-acc p { color: #ccc; }
+
+.co-red { background: rgba(255,59,47,0.05); border: 1px solid rgba(255,59,47,0.2); }
+.co-red .callout-label { color: var(--red); }
+.co-red p { color: #ccc; }
+
+.co-green { background: rgba(45,255,139,0.05); border: 1px solid rgba(45,255,139,0.2); }
+.co-green .callout-label { color: var(--green); }
+.co-green p { color: #ccc; }
+
+.co-blue { background: rgba(77,159,255,0.05); border: 1px solid rgba(77,159,255,0.2); }
+.co-blue .callout-label { color: var(--blue); }
+.co-blue p { color: #ccc; }
+
+.co-orange { background: rgba(255,140,45,0.05); border: 1px solid rgba(255,140,45,0.2); }
+.co-orange .callout-label { color: var(--orange); }
+.co-orange p { color: #ccc; }
+
+/* ── FLOW DIAGRAM ── */
+.flow-wrap {
+  overflow-x: auto;
+  padding: 8px 0 16px;
+}
+
+.flow {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  min-width: 700px;
+}
+
+.flow-node {
+  flex: 1;
+  background: var(--grey1);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 16px 14px;
+  text-align: center;
+  position: relative;
+}
+
+.flow-node .fn-num {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  color: var(--dim);
+  letter-spacing: 0.1em;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.flow-node .fn-title {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  color: var(--white);
+  line-height: 1.3;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.flow-node .fn-sub {
+  font-size: 11px;
+  color: var(--dim);
+  line-height: 1.4;
+}
+
+.flow-node.fn-hl { border-color: rgba(232,255,71,0.3); background: rgba(232,255,71,0.04); }
+.flow-node.fn-green { border-color: rgba(45,255,139,0.3); background: rgba(45,255,139,0.04); }
+.flow-node.fn-blue { border-color: rgba(77,159,255,0.3); background: rgba(77,159,255,0.04); }
+
+.flow-arr {
+  display: flex;
+  align-items: center;
+  padding: 0 6px;
+  color: var(--dim);
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+/* ── TABLE ── */
+table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 20px 0; }
+thead tr { background: var(--grey1); border-bottom: 2px solid rgba(232,255,71,0.3); }
+th { font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; padding: 12px 16px; text-align: left; color: var(--accent); }
+td { padding: 11px 16px; border-bottom: 1px solid var(--border); color: #aaa; vertical-align: top; }
+tr:hover td { background: rgba(255,255,255,0.015); }
+.yes { color: var(--green); font-weight: 700; font-family: 'Space Mono', monospace; font-size: 12px; }
+.no { color: var(--red); font-weight: 700; font-family: 'Space Mono', monospace; font-size: 12px; }
+.warn { color: var(--orange); font-weight: 700; font-family: 'Space Mono', monospace; font-size: 12px; }
+
+/* ── OWNERSHIP TABLE ── */
+.own-table { width: 100%; border-collapse: collapse; margin: 0; }
+.own-table th { font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; padding: 10px 20px; text-align: left; color: var(--dim); background: var(--grey2); border-bottom: 1px solid var(--border); }
+.own-table td { padding: 14px 20px; border-bottom: 1px solid var(--border); font-size: 13px; vertical-align: middle; }
+.own-table tr:last-child td { border-bottom: none; }
+.own-table .service-name { font-family: 'Space Mono', monospace; font-size: 12px; color: var(--white); }
+.own-table .service-role { color: #777; font-size: 12px; }
+.own-you { color: var(--green); font-family: 'Space Mono', monospace; font-size: 11px; }
+.own-collab { color: var(--orange); font-family: 'Space Mono', monospace; font-size: 11px; }
+.own-shared { color: var(--blue); font-family: 'Space Mono', monospace; font-size: 11px; }
+
+/* ── PHASE STEPS ── */
+.steps { display: flex; flex-direction: column; gap: 2px; }
+.step {
+  display: grid;
+  grid-template-columns: 48px 1fr;
+  gap: 24px;
+  align-items: start;
+  background: var(--grey1);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 20px 24px;
+}
+.step-n {
+  font-family: 'Space Mono', monospace;
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--border);
+  line-height: 1;
+  padding-top: 2px;
+}
+.step h4 { font-family: 'Space Mono', monospace; font-size: 12px; color: var(--white); margin-bottom: 6px; letter-spacing: 0.03em; }
+.step p { font-size: 13px; color: #888; }
+.step.active { border-color: rgba(232,255,71,0.25); }
+.step.active .step-n { color: rgba(232,255,71,0.2); }
+
+/* ── Q ITEMS ── */
+.q-list { display: flex; flex-direction: column; gap: 10px; }
+.q-item {
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  gap: 16px;
+  align-items: start;
+  padding: 16px 20px;
+  background: var(--grey1);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+}
+.q-item.q-dev { border-left: 3px solid var(--blue); }
+.q-item.q-3d { border-left: 3px solid var(--purple); }
+.q-icon { font-size: 16px; padding-top: 1px; }
+.q-text { font-size: 13px; color: #bbb; line-height: 1.6; }
+.q-text strong { color: var(--white); font-size: 12px; font-family: 'Space Mono', monospace; letter-spacing: 0.03em; display: block; margin-bottom: 4px; }
+
+/* ── ROADMAP ── */
+.roadmap { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+.rm-phase { background: var(--grey1); border: 1px solid var(--border); border-radius: 4px; padding: 24px; }
+.rm-phase h4 { font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px; }
+.rm-phase .rm-time { font-family: 'Space Mono', monospace; font-size: 10px; color: var(--dim); margin-bottom: 16px; display: block; }
+.rm-phase ul { list-style: none; padding: 0; }
+.rm-phase ul li { font-size: 12px; color: #888; padding: 5px 0 5px 14px; position: relative; border-bottom: 1px solid rgba(255,255,255,0.03); }
+.rm-phase ul li:last-child { border-bottom: none; }
+.rm-phase ul li::before { content: '→'; position: absolute; left: 0; color: var(--accent); font-family: 'Space Mono', monospace; font-size: 10px; }
+.rm-p1 { border-top: 3px solid var(--green); }
+.rm-p1 h4 { color: var(--green); }
+.rm-p2 { border-top: 3px solid var(--blue); }
+.rm-p2 h4 { color: var(--blue); }
+.rm-p3 { border-top: 3px solid var(--orange); }
+.rm-p3 h4 { color: var(--orange); }
+
+/* ── MISC ── */
+pre {
+  background: #0e0e0e;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 20px;
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  color: #888;
+  overflow-x: auto;
+  margin: 16px 0;
+  line-height: 2;
+}
+pre .k { color: var(--accent); }
+pre .v { color: var(--blue); }
+pre .c { color: #3a3a3a; }
+
+.divider { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+
+.highlight-box {
+  background: linear-gradient(135deg, rgba(232,255,71,0.06), rgba(45,255,139,0.03));
+  border: 1px solid rgba(232,255,71,0.2);
+  border-radius: 6px;
+  padding: 32px;
+  margin: 32px 0;
+}
+.highlight-box h3 { font-family: 'Space Mono', monospace; font-size: 13px; color: var(--accent); margin-bottom: 16px; }
+.highlight-box p { font-size: 13px; color: #bbb; margin-bottom: 8px; line-height: 1.7; }
+
+@media (max-width: 900px) {
+  .cover, .section, .toc-bar { padding-left: 24px; padding-right: 24px; }
+  .g2, .g3, .g4, .roadmap { grid-template-columns: 1fr; }
+  .cover-bottom { flex-direction: column; gap: 20px; }
+}
+</style>
+</head>
+<body>
+<!-- COVER -->
+<div class="cover">
+  <div class="cover-top">
+    <div class="logo-mark">Basedodici — Briefing Tecnico</div>
+    <div class="doc-badge">DOCUMENTO INTERNO — V1.0 — MARZO 2026</div>
+  </div>
+  <div class="cover-center">
+    <div class="cover-eyebrow">Configuratore 3D</div>
+    <h1 class="cover-title">
+      Unreal Engine<br>
+      <span class="dim">×</span> Shopify<br>
+      <span class="acc">Stack Completo</span>
+    </h1>
+    <p class="cover-desc">
+      Architettura tecnica, flusso dati, gestione accessi e roadmap per il configuratore di prodotti custom Basedodici. Documento di riferimento per il team di sviluppo.
+    </p>
+  </div>
+  <div class="cover-bottom">
+    <div class="cover-meta">
+      Ludovico Zarini — Basedodici / Gerico Agency<br>
+      Call sviluppatore: domani<br>
+      Call 3D artist: lunedì
+    </div>
+    <div class="audience-tags">
+      <span class="aud-tag aud-owner">👤 Owner</span>
+      <span class="aud-tag aud-dev">💻 Sviluppatore</span>
+      <span class="aud-tag aud-3d">🎮 3D Artist</span>
+    </div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav class="toc-bar">
+  <a href="#s1">01 — Panoramica</a>
+  <a href="#s2">02 — Stack & Accessi</a>
+  <a href="#s3">03 — Flusso Completo</a>
+  <a href="#s4">04 — Shopify Setup</a>
+  <a href="#s5">05 — Carrello & Dati</a>
+  <a href="#s6">06 — Asset & Drive</a>
+  <a href="#s7">07 — Domande Aperte</a>
+  <a href="#s8">08 — Roadmap</a>
+</nav>
+
+
+<!-- S1: PANORAMICA -->
+<section class="section" id="s1">
+  <div class="sec-header">
+    <span class="sec-num">01</span>
+    <div>
+      <h2 class="sec-title">Panoramica del Sistema</h2>
+      <p class="sec-sub">Cosa stiamo costruendo e come si relazionano i pezzi tra loro.</p>
+    </div>
+  </div>
+
+  <div class="callout co-acc">
+    <div class="callout-label">Obiettivo</div>
+    <p>Un configuratore 3D interattivo su basedodici.com che permette ai clienti di personalizzare t-shirt, felpe, pantaloni e jogger con stampe custom, colori base e posizionamento grafico. Il configuratore gira su Unreal Engine in streaming. Quando il cliente finalizza, il prodotto custom entra nel carrello Shopify standard e il checkout avviene normalmente.</p>
+  </div>
+
+  <div class="g4" style="margin-top: 32px;">
+    <div class="card card-purple">
+      <div class="tag t-purple">Layer 1</div>
+      <div class="card-title">Unreal Engine</div>
+      <p>Il configuratore 3D. Rendering fotorealistico del prodotto in tempo reale. Gestisce colori, stampe, posizionamento. Cattura lo screenshot finale.</p>
+    </div>
+    <div class="card card-blue">
+      <div class="tag t-blue">Layer 2</div>
+      <div class="card-title">Arcware (Pixel Streaming)</div>
+      <p>Trasmette il configuratore Unreal come video stream nel browser del cliente. Canale bidirezionale JS ↔ UE per passare dati.</p>
+    </div>
+    <div class="card card-orange">
+      <div class="tag t-orange">Layer 3</div>
+      <div class="card-title">Hetzner + Node.js</div>
+      <p>Microservice su server proprio. Riceve la configurazione, carica lo screenshot su Cloudinary, ritorna l'URL da passare a Shopify.</p>
+    </div>
+    <div class="card card-green">
+      <div class="tag t-green">Layer 4</div>
+      <div class="card-title">Shopify</div>
+      <p>Carrello e checkout standard. Prodotti template fissi. Configurazione allegata come proprietà della line item. Nessun prodotto nuovo viene mai creato.</p>
+    </div>
+  </div>
+
+  <div style="margin-top: 40px;">
+    <p style="font-family:'Space Mono',monospace; font-size:10px; color:var(--dim); letter-spacing:0.1em; text-transform:uppercase; margin-bottom:20px;">Flusso macro — dall'apertura del configuratore all'ordine</p>
+    <div class="flow-wrap">
+      <div class="flow">
+        <div class="flow-node">
+          <span class="fn-num">01</span>
+          <span class="fn-title">Cliente apre<br>configuratore</span>
+          <span class="fn-sub">Pagina Shopify<br>+ iframe Arcware</span>
+        </div>
+        <div class="flow-arr">→</div>
+        <div class="flow-node fn-hl">
+          <span class="fn-num">02</span>
+          <span class="fn-title">Configura<br>il prodotto</span>
+          <span class="fn-sub">Tutto su Unreal<br>in streaming</span>
+        </div>
+        <div class="flow-arr">→</div>
+        <div class="flow-node">
+          <span class="fn-num">03</span>
+          <span class="fn-title">Preme<br>Add to Cart</span>
+          <span class="fn-sub">UE cattura screen<br>+ prepara JSON</span>
+        </div>
+        <div class="flow-arr">→</div>
+        <div class="flow-node fn-blue">
+          <span class="fn-num">04</span>
+          <span class="fn-title">Hetzner<br>processa</span>
+          <span class="fn-sub">Carica su Cloudinary<br>→ ritorna URL</span>
+        </div>
+        <div class="flow-arr">→</div>
+        <div class="flow-node fn-green">
+          <span class="fn-num">05</span>
+          <span class="fn-title">Carrello<br>Shopify</span>
+          <span class="fn-sub">Prodotto + config<br>+ preview image</span>
+        </div>
+        <div class="flow-arr">→</div>
+        <div class="flow-node">
+          <span class="fn-num">06</span>
+          <span class="fn-title">Checkout<br>standard</span>
+          <span class="fn-sub">Pagamento normale<br>Shopify</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- S2: STACK & ACCESSI -->
+<section class="section" id="s2">
+  <div class="sec-header">
+    <span class="sec-num">02</span>
+    <div>
+      <h2 class="sec-title">Stack Tecnologico & Gestione Accessi</h2>
+      <p class="sec-sub">Ogni servizio coinvolto, chi lo possiede e chi ci ha accesso come collaboratore.</p>
+    </div>
+  </div>
+
+  <div class="callout co-red" style="margin-bottom: 32px;">
+    <div class="callout-label">⚠️ Regola fondamentale</div>
+    <p>Ogni account, dominio, credenziale e repo deve essere intestato a Ludovico / Basedodici. Sviluppatore e 3D artist hanno accesso come <strong>collaboratori</strong> — non come proprietari. Se un collaboratore lascia il progetto, revochi l'accesso. Il sistema continua a funzionare.</p>
+  </div>
+
+  <div style="background: var(--grey1); border: 1px solid var(--border); border-radius: 4px; overflow: hidden; margin-bottom: 32px;">
+    <table class="own-table">
+      <thead>
+        <tr>
+          <th>Servizio</th>
+          <th>Ruolo nel progetto</th>
+          <th>Account owner</th>
+          <th>Accesso sviluppatore</th>
+          <th>Accesso 3D artist</th>
+          <th>Costo</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="service-name">Shopify</span><br><span class="service-role">Carrello, checkout, ordini</span></td>
+          <td>Layer 4 — destinazione finale</td>
+          <td><span class="own-you">✓ TUO</span></td>
+          <td><span class="own-collab">Collaboratore staff</span></td>
+          <td><span class="t-dim tag">Nessuno</span></td>
+          <td>Piano attivo</td>
+        </tr>
+        <tr>
+          <td><span class="service-name">GitHub</span><br><span class="service-role">Codice microservice + tema Shopify</span></td>
+          <td>Repository unico di tutto il codice</td>
+          <td><span class="own-you">✓ TUO</span></td>
+          <td><span class="own-collab">Collaboratore repo</span></td>
+          <td><span class="own-collab">Collaboratore repo UE</span></td>
+          <td>Free / Team</td>
+        </tr>
+        <tr>
+          <td><span class="service-name">Arcware.ai</span><br><span class="service-role">Pixel streaming Unreal</span></td>
+          <td>Layer 2 — streaming del configuratore</td>
+          <td><span class="own-you">✓ TUO</span></td>
+          <td><span class="own-collab">Accesso dashboard</span></td>
+          <td><span class="own-collab">Accesso deploy</span></td>
+          <td>Pay-per-session</td>
+        </tr>
+        <tr>
+          <td><span class="service-name">Hetzner VPS</span><br><span class="service-role">Server Node.js microservice</span></td>
+          <td>Layer 3 — logica intermedia</td>
+          <td><span class="own-you">✓ TUO</span></td>
+          <td><span class="own-collab">SSH key collaboratore</span></td>
+          <td><span class="t-dim tag">Nessuno</span></td>
+          <td>~€5-10/m</td>
+        </tr>
+        <tr>
+          <td><span class="service-name">Cloudinary</span><br><span class="service-role">Storage screenshot + CDN immagini</span></td>
+          <td>Layer 3 — hosting preview images</td>
+          <td><span class="own-you">✓ TUO</span></td>
+          <td><span class="own-collab">API key solo per upload</span></td>
+          <td><span class="t-dim tag">Nessuno</span></td>
+          <td>Free tier</td>
+        </tr>
+        <tr>
+          <td><span class="service-name">Google Drive</span><br><span class="service-role">Asset master stampe</span></td>
+          <td>Archivio sorgente grafiche</td>
+          <td><span class="own-you">✓ TUO</span></td>
+          <td><span class="t-dim tag">Nessuno</span></td>
+          <td><span class="own-collab">Accesso cartella specifica</span></td>
+          <td>Google One tuo</td>
+        </tr>
+        <tr>
+          <td><span class="service-name">Epic Games / Unreal</span><br><span class="service-role">Il configuratore 3D</span></td>
+          <td>Layer 1 — il cuore del progetto</td>
+          <td><span class="own-collab">Account 3D artist</span></td>
+          <td><span class="t-dim tag">Nessuno</span></td>
+          <td><span class="own-you">Lead</span></td>
+          <td>Gratuito</td>
+        </tr>
+        <tr>
+          <td><span class="service-name">Google Cloud Console</span><br><span class="service-role">Service account per Drive API</span></td>
+          <td>Autenticazione automazione Drive→UE</td>
+          <td><span class="own-you">✓ TUO</span></td>
+          <td><span class="t-dim tag">Nessuno</span></td>
+          <td><span class="own-collab">Usa service account tuo</span></td>
+          <td>Free</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="g2">
+    <div class="callout co-green" style="margin: 0;">
+      <div class="callout-label">✓ Cosa fare prima della call</div>
+      <p>Crea l'account Arcware intestato a te. Crea l'organizzazione GitHub "basedodici" e il repo del progetto. Crea l'account Cloudinary con email Gerico/Basedodici. Crea il service account Google Cloud per l'automazione Drive. Tutto prima che lo sviluppatore o la 3D artist inizino a lavorare.</p>
+    </div>
+    <div class="callout co-orange" style="margin: 0;">
+      <div class="callout-label">⚠️ Cosa non delegare mai</div>
+      <p>Non lasciare che qualcun altro crei gli account a tuo nome "per comodità". Non dare mai password dirette — solo accessi collaboratore con ruoli limitati. Tieni un documento con tutte le credenziali e i piani attivi. Aggiornalo ogni volta che aggiungi un servizio.</p>
+    </div>
+  </div>
+</section>
+
+<!-- S3: FLUSSO COMPLETO -->
+<section class="section" id="s3">
+  <div class="sec-header">
+    <span class="sec-num">03</span>
+    <div>
+      <h2 class="sec-title">Flusso Tecnico Completo</h2>
+      <p class="sec-sub">Ogni step dall'apertura del configuratore fino alla conferma ordine, con chi fa cosa.</p>
+    </div>
+  </div>
+
+  <div class="steps">
+    <div class="step active">
+      <div class="step-n">01</div>
+      <div>
+        <h4>Cliente naviga su basedodici.com e apre il configuratore</h4>
+        <p>Il menu del sito ha un link "Personalizza" che porta a una pagina Shopify dedicata. La pagina contiene l'iframe del player Arcware. Arcware istanzia una sessione Unreal dedicata per quel cliente — nessun altro vede la sua sessione. Il configuratore 3D appare e il cliente inizia a interagire.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-n">02</div>
+      <div>
+        <h4>Il cliente personalizza il prodotto — tutto avviene in Unreal</h4>
+        <p>Sceglie il garment (t-shirt, felpa, pantalone, jogger), il colore base, le stampe da applicare e la loro posizione (petto, spalla, schiena, manica...). Tutto il 3D e la logica di configurazione è dentro Unreal — nessun dato viene ancora mandato a Shopify. Lo stato della configurazione vive nell'istanza Unreal di quella sessione.</p>
+      </div>
+    </div>
+    <div class="step active">
+      <div class="step-n">03</div>
+      <div>
+        <h4>Cliente preme "Aggiungi al Carrello" — si avvia la catena</h4>
+        <p>Unreal Blueprint esegue due cose in sequenza: cattura uno screenshot del viewport 3D (quello che il cliente sta vedendo in quel momento) e prepara il JSON con tutta la configurazione. Entrambi vengono mandati al JavaScript della pagina Shopify tramite il canale Arcware. Il bottone nel configuratore entra in stato "Caricamento..." per i 2-4 secondi necessari.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-n">04</div>
+      <div>
+        <h4>JavaScript riceve il payload e chiama Hetzner</h4>
+        <p>Il JS nella pagina Shopify riceve il messaggio da Arcware. Estrae il garment type per sapere quale prodotto template usare. Manda al microservice su Hetzner: lo screenshot in base64 + il JSON di configurazione. Aspetta la risposta.</p>
+      </div>
+    </div>
+    <div class="step active">
+      <div class="step-n">05</div>
+      <div>
+        <h4>Hetzner processa e carica su Cloudinary</h4>
+        <p>Il microservice Node.js su Hetzner riceve lo screenshot base64, lo converte in file immagine e lo carica su Cloudinary con un nome univoco (es. <code>order_[sessionID]_[timestamp].jpg</code>). Cloudinary ritorna un URL permanente. Hetzner lo rimanda al JavaScript come risposta.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-n">06</div>
+      <div>
+        <h4>JavaScript aggiunge al carrello Shopify via Storefront API</h4>
+        <p>Con l'URL preview in mano, il JS costruisce la chiamata alla Shopify Storefront API. Aggiunge il prodotto template corretto al carrello con tutte le proprietà: garment, colore, stampe, posizioni, URL preview, JSON completo della configurazione (nascosto con underscore). Il carrello drawer si apre — il cliente vede il suo prodotto 3D come immagine.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-n">07</div>
+      <div>
+        <h4>Da qui in poi: Shopify standard</h4>
+        <p>Il cliente può aggiungere altri prodotti normali al carrello, tornare sul configuratore per aggiungere un secondo capo, navigare il sito. Quando va al checkout è tutto nativo Shopify — pagamento, conferma ordine, email. Nell'email di conferma e nell'admin vedi il riepilogo della configurazione e l'immagine del render 3D.</p>
+      </div>
+    </div>
+    <div class="step active">
+      <div class="step-n">08</div>
+      <div>
+        <h4>Protezione: nessuno può comprare il template direttamente</h4>
+        <p>I 4 prodotti template non sono nel menu, non sono nelle collection, non sono ricercabili. Nel loro template Liquid il bottone "Aggiungi al carrello" è disabilitato e rimanda al configuratore. Al checkout, una validazione controlla che ogni line item dei prodotti configurator abbia la property <code>_from_configurator</code> — altrimenti blocca.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- S4 SHOPIFY SETUP -->
+<section class="section" id="s4">
+  <div class="sec-header">
+    <span class="sec-num">04</span>
+    <div>
+      <h2 class="sec-title">Shopify — Setup Prodotti Template</h2>
+      <p class="sec-sub">Come configurare i 4 prodotti base. Compito dello sviluppatore, ma devi capirlo.</p>
+    </div>
+  </div>
+  <div class="callout co-acc" style="margin-bottom:32px;">
+    <div class="callout-label">Il concetto fondamentale</div>
+    <p>I 4 prodotti template sono "contenitori vuoti" a cui Unreal si aggancia. Non rappresentano il prodotto finale — rappresentano la categoria. La personalizzazione reale vive nelle proprietà della line item del carrello. Il prodotto template non viene MAI modificato durante il processo d'acquisto.</p>
+  </div>
+  <div class="g4" style="margin-bottom:32px;">
+    <div class="card card-accent">
+      <div class="tag t-acc">Prodotto 1</div>
+      <div class="card-title">T-Shirt Custom</div>
+      <ul><li>Varianti: S/M/L/XL/XXL</li><li>Foto: t-shirt neutra</li><li>Tag: configurator-only</li><li>Nascosto da collection e search</li></ul>
+    </div>
+    <div class="card card-accent">
+      <div class="tag t-acc">Prodotto 2</div>
+      <div class="card-title">Felpa Custom</div>
+      <ul><li>Varianti: S/M/L/XL/XXL</li><li>Foto: felpa neutra</li><li>Tag: configurator-only</li><li>Nascosto da collection e search</li></ul>
+    </div>
+    <div class="card card-accent">
+      <div class="tag t-acc">Prodotto 3</div>
+      <div class="card-title">Pantalone Custom</div>
+      <ul><li>Varianti: S/M/L/XL/XXL</li><li>Foto: pantalone neutro</li><li>Tag: configurator-only</li><li>Nascosto da collection e search</li></ul>
+    </div>
+    <div class="card card-accent">
+      <div class="tag t-acc">Prodotto 4</div>
+      <div class="card-title">Jogger Custom</div>
+      <ul><li>Varianti: S/M/L/XL/XXL</li><li>Foto: jogger neutro</li><li>Tag: configurator-only</li><li>Nascosto da collection e search</li></ul>
+    </div>
+  </div>
+  <div class="g2">
+    <div>
+      <p style="font-family:'Space Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:12px;">Modifiche tema Shopify richieste allo sviluppatore</p>
+      <div class="card">
+        <ul>
+          <li>Rimozione link prodotto nel carrello per tag configurator-only</li>
+          <li>Visualizzazione line item properties nel drawer carrello</li>
+          <li>Thumbnail da _preview_image (render 3D) invece della foto template</li>
+          <li>Redirect al configuratore dalla pagina prodotto template</li>
+          <li>Validazione checkout: blocca se manca _from_configurator</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <p style="font-family:'Space Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:12px;">Cosa vede il cliente nel carrello</p>
+      <div class="card card-green">
+        <div class="tag t-green">Esempio visivo carrello</div>
+        <p style="font-family:'Space Mono',monospace;font-size:11px;line-height:2.2;color:#bbb;">
+          [render 3D del prodotto suo]<br>
+          <strong style="color:var(--white);">T-Shirt Basedodici Custom — M</strong><br>
+          Colore base: Nero<br>
+          Stampa 1: Logo B12 — Petto Sinistra<br>
+          Stampa 2: Grafica XY — Schiena<br>
+          <span style="color:var(--dim);">€ 89,00</span>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- S5 CARRELLO & DATI -->
+<section class="section" id="s5">
+  <div class="sec-header">
+    <span class="sec-num">05</span>
+    <div>
+      <h2 class="sec-title">Carrello, Dati & Sessioni Multiple</h2>
+      <p class="sec-sub">Come i dati sono isolati tra clienti e cosa arriva nell'ordine finale.</p>
+    </div>
+  </div>
+  <div class="g2" style="margin-bottom:32px;">
+    <div class="callout co-green" style="margin:0;">
+      <div class="callout-label">✓ Sessioni multiple — problema inesistente</div>
+      <p>Ogni browser ha un cart token Shopify unico. La configurazione del Cliente A e del Cliente B vivono su carrelli separati. Nessun "prodotto condiviso" può contaminarsi — i dati non si incrociano mai perché non modificano nessun prodotto, solo il loro carrello personale.</p>
+    </div>
+    <div class="callout co-blue" style="margin:0;">
+      <div class="callout-label">ℹ️ Il vero limite di scalabilità</div>
+      <p>Il problema di concorrenza non è su Shopify ma su Arcware: ogni sessione attiva del configuratore richiede una istanza GPU Unreal separata. Arcware gestisce questo con auto-scaling. È il costo principale da monitorare in base al traffico reale.</p>
+    </div>
+  </div>
+  <div class="g2">
+    <div>
+      <p style="font-size:11px;color:var(--dim);margin-bottom:8px;">JSON inviato da Unreal al JavaScript</p>
+      <pre>{
+  <span class="k">"garment"</span>: <span class="v">"tshirt"</span>,
+  <span class="k">"base_color"</span>: <span class="v">"#0a0a0a"</span>,
+  <span class="k">"size"</span>: <span class="v">"M"</span>,
+  <span class="k">"prints"</span>: [{
+    <span class="k">"graphic_id"</span>: <span class="v">"logo_b12"</span>,
+    <span class="k">"position"</span>: <span class="v">"chest_left"</span>
+  }],
+  <span class="k">"screenshot"</span>: <span class="v">"[base64...]"</span>,
+  <span class="k">"session_id"</span>: <span class="v">"ue_abc123"</span>
+}</pre>
+    </div>
+    <div>
+      <p style="font-size:11px;color:var(--dim);margin-bottom:8px;">Line item properties salvate su Shopify</p>
+      <pre>{
+  <span class="k">"Garment"</span>: <span class="v">"T-Shirt"</span>,
+  <span class="k">"Colore"</span>: <span class="v">"Nero"</span>,
+  <span class="k">"Stampa 1"</span>: <span class="v">"Logo B12 — Petto Sx"</span>,
+  <span class="c">// visibili al cliente ↑</span>
+  <span class="c">// nascosti (underscore) ↓</span>
+  <span class="k">"_preview_image"</span>: <span class="v">"https://cloudinary..."</span>,
+  <span class="k">"_config_json"</span>: <span class="v">"{full config}"</span>,
+  <span class="k">"_from_configurator"</span>: <span class="v">"true"</span>
+}</pre>
+    </div>
+  </div>
+  <div class="callout co-acc">
+    <div class="callout-label">💡 Properties con underscore in Shopify</div>
+    <p>Le proprietà che iniziano con <code>_</code> non vengono mostrate al cliente nel carrello né nell'email di conferma, ma sono visibili nell'admin Shopify e salvate sull'ordine per sempre. Perfetto per tenere il JSON tecnico senza sporcare la UX.</p>
+  </div>
+</section>
+
+<!-- S6 ASSET & DRIVE -->
+<section class="section" id="s6">
+  <div class="sec-header">
+    <span class="sec-num">06</span>
+    <div>
+      <h2 class="sec-title">Asset, Google Drive & Automazione Stampe</h2>
+      <p class="sec-sub">Come le nuove grafiche entrano nel configuratore e chi controlla cosa.</p>
+    </div>
+  </div>
+  <div class="highlight-box">
+    <h3>Il flusso operativo che vogliamo</h3>
+    <p>Tu carichi un PNG su una cartella Google Drive. L'automazione lo rileva. La nuova stampa appare nel configuratore <strong>senza deploy, senza aprire Unreal, senza chiamare nessuno.</strong></p>
+    <p>Questo flusso esiste già — la 3D artist lo ha costruito. L'obiettivo della call di lunedì è trasferire tutto su infrastruttura tua.</p>
+  </div>
+  <div class="g2" style="margin-bottom:32px;">
+    <div>
+      <p style="font-family:'Space Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:12px;">Struttura cartelle Drive da creare</p>
+      <div class="card">
+        <p style="font-family:'Space Mono',monospace;font-size:12px;line-height:2.4;color:#aaa;">
+          📁 Basedodici — Configuratore<br>
+          &nbsp;&nbsp;&nbsp;📁 <span style="color:var(--green);">Stampe Attive</span> ← carichi qui<br>
+          &nbsp;&nbsp;&nbsp;📁 <span style="color:var(--dim);">Stampe Archiviate</span> ← sposti qui per rimuovere<br>
+          &nbsp;&nbsp;&nbsp;📁 <span style="color:var(--blue);">Asset Prodotti</span> ← foto prodotti neutri<br>
+          &nbsp;&nbsp;&nbsp;📁 <span style="color:var(--dim);">Bozze</span> ← prove non ancora live<br>
+          &nbsp;&nbsp;&nbsp;📄 README_istruzioni.txt
+        </p>
+      </div>
+    </div>
+    <div>
+      <p style="font-family:'Space Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:12px;">Gestione operativa stampe</p>
+      <div class="card card-green">
+        <ul>
+          <li><strong style="color:var(--white);">Aggiungere stampa:</strong> carichi PNG in "Stampe Attive" → appare nel configuratore</li>
+          <li><strong style="color:var(--white);">Rimuovere stampa:</strong> sposti in "Archiviate" → scompare dal configuratore</li>
+          <li><strong style="color:var(--white);">Nessun deploy:</strong> zero intervento tecnico per ogni aggiornamento grafico</li>
+          <li><strong style="color:var(--white);">Controllo totale:</strong> non dipendi da nessuno per aggiornare l'offerta</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="callout co-acc" style="margin:0;">
+      <div class="callout-label">🔑 Il service account — cosa chiedere alla 3D artist</div>
+      <p>L'automazione usa credenziali Google per leggere Drive. Queste credenziali devono essere un <strong>service account creato da te</strong> nella Google Cloud Console. La 3D artist usa quel service account — non il suo account personale. Se smetti di lavorare con lei, disabiliti il service account e l'automazione si blocca istantaneamente.</p>
+    </div>
+    <div class="callout co-blue" style="margin:0;">
+      <div class="callout-label">📦 Il codice dell'automazione su GitHub</div>
+      <p>Lo script che fa girare l'automazione Drive→Unreal deve essere committato nel repo GitHub del progetto (tuo). Con documentazione: cosa fa, come si configura, quali credenziali usa. Così chiunque prenda in mano il progetto in futuro capisce tutto senza dover chiedere alla 3D artist.</p>
+    </div>
+  </div>
+</section>
+
+<!-- S7 DOMANDE APERTE -->
+<section class="section" id="s7">
+  <div class="sec-header">
+    <span class="sec-num">07</span>
+    <div>
+      <h2 class="sec-title">Domande Aperte per le Call</h2>
+      <p class="sec-sub">Punti da chiarire — separati per interlocutore.</p>
+    </div>
+  </div>
+
+  <p style="font-family:'Space Mono',monospace;font-size:10px;color:var(--blue);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:16px;">💻 Per lo sviluppatore — Call domani</p>
+  <div class="q-list" style="margin-bottom:40px;">
+    <div class="q-item q-dev">
+      <div class="q-icon">01</div>
+      <div class="q-text"><strong>Microservice su Hetzner — struttura</strong>Hai esperienza con Node.js su VPS? Usiamo il Hetzner che ho già con EasyEngine o ne creiamo uno separato per il microservice? Come gestiamo il deploy (PM2, Docker, altro)?</div>
+    </div>
+    <div class="q-item q-dev">
+      <div class="q-icon">02</div>
+      <div class="q-text"><strong>Shopify Storefront API — approccio</strong>Hai già lavorato con la Storefront API per add-to-cart custom? Quale approccio preferisci per le line item properties — fetch diretto o usiamo un SDK?</div>
+    </div>
+    <div class="q-item q-dev">
+      <div class="q-icon">03</div>
+      <div class="q-text"><strong>Tema Shopify — accesso e modifica</strong>Hai accesso al tema di Basedodici? Lavoriamo su tema child? Come gestiamo le modifiche Liquid per il carrello custom?</div>
+    </div>
+    <div class="q-item q-dev">
+      <div class="q-icon">04</div>
+      <div class="q-text"><strong>Arcware — integrazione JavaScript</strong>Hai già integrato Arcware o pixel streaming simile? Il loro SDK JavaScript — come comunica con il nostro microservice?</div>
+    </div>
+    <div class="q-item q-dev">
+      <div class="q-icon">05</div>
+      <div class="q-text"><strong>Cloudinary — upload da Hetzner</strong>Gestisci tu il setup Cloudinary? Ti passo le API key o crei tu l'account (nota: l'account lo creo io, ti passo solo le chiavi API con permessi limitati).</div>
+    </div>
+    <div class="q-item q-dev">
+      <div class="q-icon">06</div>
+      <div class="q-text"><strong>GitHub — repo e workflow</strong>Ti aggiungo come collaboratore al repo che creo io. Usi branch + PR o lavoriamo direttamente su main per questa fase?</div>
+    </div>
+  </div>
+
+  <p style="font-family:'Space Mono',monospace;font-size:10px;color:var(--purple);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:16px;">🎮 Per la 3D artist — Call lunedì</p>
+  <div class="q-list">
+    <div class="q-item q-3d">
+      <div class="q-icon">01</div>
+      <div class="q-text"><strong>Automazione Drive → Unreal — come funziona esattamente?</strong>È un watcher che monitora la cartella? Gira in background sempre? Richiede che Unreal sia aperto o è un processo separato? Cosa succede esattamente quando carico un PNG?</div>
+    </div>
+    <div class="q-item q-3d">
+      <div class="q-icon">02</div>
+      <div class="q-text"><strong>Tempi di propagazione</strong>Quanto ci vuole dal momento che carico il PNG su Drive a quando la stampa appare disponibile nel configuratore live su Arcware?</div>
+    </div>
+    <div class="q-item q-3d">
+      <div class="q-icon">03</div>
+      <div class="q-text"><strong>Credenziali Google — trasferimento</strong>L'automazione usa un tuo account Google personale o già un service account? Dobbiamo migrarlo su un service account intestato a me. Sei disponibile a farlo insieme?</div>
+    </div>
+    <div class="q-item q-3d">
+      <div class="q-icon">04</div>
+      <div class="q-text"><strong>Codice dell'automazione — dove vive?</strong>Lo script/plugin è sul tuo computer? Dobbiamo metterlo sul repo GitHub del progetto con documentazione. Puoi preparare un README che spiega come funziona e come si riconfigura?</div>
+    </div>
+    <div class="q-item q-3d">
+      <div class="q-icon">05</div>
+      <div class="q-text"><strong>Screenshot da Unreal — implementazione</strong>Abbiamo deciso di usare screenshot del viewport 3D per la preview nel carrello. Come implementiamo questo nel Blueprint? Hai già esperienza con TakeScreenshot o viewport capture in UE?</div>
+    </div>
+    <div class="q-item q-3d">
+      <div class="q-icon">06</div>
+      <div class="q-text"><strong>Formato e dimensioni asset stampe</strong>Quale formato PNG usiamo per le stampe? Fondo trasparente ovviamente — ma ci sono requisiti di dimensione, risoluzione o naming convention che devo rispettare quando carico i file su Drive?</div>
+    </div>
+  </div>
+</section>
+
+<!-- S8 ROADMAP -->
+<section class="section" id="s8">
+  <div class="sec-header">
+    <span class="sec-num">08</span>
+    <div>
+      <h2 class="sec-title">Roadmap di Implementazione</h2>
+      <p class="sec-sub">Tre fasi progressive. Si lancia con la Fase 1, si evolve senza stravolgere niente.</p>
+    </div>
+  </div>
+  <div class="roadmap">
+    <div class="rm-phase rm-p1">
+      <h4>Fase 1 — MVP</h4>
+      <span class="rm-time">Settimane 1–5</span>
+      <ul>
+        <li>4 prodotti template su Shopify</li>
+        <li>Arcware account creato e configurato</li>
+        <li>UE Blueprint → payload JSON + screenshot</li>
+        <li>Microservice Node.js su Hetzner</li>
+        <li>Cloudinary setup + upload screenshot</li>
+        <li>Storefront API add-to-cart con properties</li>
+        <li>Carrello drawer con preview render 3D</li>
+        <li>Protezione prodotti template (redirect + validazione)</li>
+        <li>Automazione Drive→UE su service account tuo</li>
+        <li>Tutto il codice su GitHub tuo</li>
+      </ul>
+    </div>
+    <div class="rm-phase rm-p2">
+      <h4>Fase 2 — Rifinitura</h4>
+      <span class="rm-time">Settimane 6–8</span>
+      <ul>
+        <li>Loading state nel configuratore durante add-to-cart</li>
+        <li>Link "modifica configurazione" dal carrello</li>
+        <li>Email di conferma ordine con render 3D</li>
+        <li>Admin Shopify: riepilogo config negli ordini</li>
+        <li>Pulizia automatica immagini Cloudinary (n8n)</li>
+        <li>Test stress sessioni multiple contemporanee</li>
+        <li>Analytics configurazioni più scelte</li>
+      </ul>
+    </div>
+    <div class="rm-phase rm-p3">
+      <h4>Fase 3 — Evoluzione</h4>
+      <span class="rm-time">Ongoing</span>
+      <ul>
+        <li>Storico configurazioni cliente (metafields ordine)</li>
+        <li>"Riordina con stessa config" in area personale</li>
+        <li>Prezzi dinamici per numero di stampe</li>
+        <li>Nuovi garment senza stravolgere architettura</li>
+        <li>Automazione produzione: n8n notifica team quando arriva ordine custom</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout co-green" style="margin-top:32px;">
+    <div class="callout-label">✓ Il principio guida di tutto il progetto</div>
+    <p>Architettura <strong>stateless lato Shopify</strong>: nessuna modifica ai prodotti template durante il flusso cliente. Tutta la personalizzazione vive nelle line item properties del carrello di quella sessione. I prodotti rimangono sempre "vergini". Questo rende il sistema robusto, scalabile e senza race conditions con qualsiasi numero di clienti simultanei.</p>
+  </div>
+</section>
+
+</body>
+</html>
